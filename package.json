@@ -1,0 +1,12 @@
+{
+  "name": "file_generator",
+  "version": "1.0.0",
+  "description": "Random Words File Generator",
+  "main": "file_generator.js",
+  "scripts": {
+    "generate": "node --max-old-space-size=9999 file_generator.js"
+  },
+  "keywords": [],
+  "author": "cdias900",
+  "license": "MIT"
+}
