@@ -1,5 +1,11 @@
 const fs = require('fs');
 
+// Command line arguments
+const argv = process.argv.slice(2);
+const FILE_SIZE = (argv[0] || 100) * 1000000;
+const FILE_NAME = argv[1] || './out.txt';
+const MODE = argv[2] || '--override';
+
 /**
  * Synchronously gets the content of a file
  * @param {string} filename The path of the file
@@ -10,40 +16,45 @@ function getFileContent(filename) {
 }
 
 /**
- * Gets the sum of the lengths of all strings in an array
- * @param {Array<string>} textArray
- * @returns {Number} The length of all strings in the array
+ * Gets the sum of the lengths in an array
+ * @param {Array<number>} lenghtArray
+ * @returns {Number} The sum of the string lengths in the array
  */
-function getTextArrayLength(textArray) {
-    return textArray.reduce((p, c) => p + c.length, 0);
+function getTotalLength(lenghtArray) {
+    return lenghtArray.reduce((p, c) => p + c, 0);
 }
 
-// Command line argument
-const argv = process.argv.slice(2);
-const FILE_SIZE = (argv[0] || 100) * 1000000;
+/**
+ * Overrides or Appends a file
+ * @param {string} text String to be saved
+ * @param {string} index The index of the text
+ */
+function saveFile(text, index) {
+    if(index === 0 && MODE !== '--append') return fs.writeFileSync(FILE_NAME, text);
+    return fs.appendFileSync(FILE_NAME, text);
+}
 
 const adj = getFileContent('./words/adj.txt');
 const noun = getFileContent('./words/noun.txt');
 const sup = getFileContent('./words/sup.txt');
 
-let textArr = [''];
+let totalLength = [0];
+let text = '';
 let i = 0, j = 0;
 
-while(getTextArrayLength(textArr) <= FILE_SIZE) {
+while(getTotalLength(totalLength) <= FILE_SIZE) {
     const rAdj = Math.round(((Math.random() * i * FILE_SIZE) % adj.length));
     const rNoun = Math.round(((Math.random() * i * FILE_SIZE) % noun.length));
     const rSup = Math.round(((Math.random() * i * FILE_SIZE) % sup.length));
     try {
-        textArr[j] += `${adj[rAdj]} ${noun[rNoun]} ${sup[rSup]} `;
+        text += `${adj[rAdj]} ${noun[rNoun]} ${sup[rSup]} `;
+        totalLength[j] = text.length;
     } catch(e) {
+        saveFile(text, j);
+        text = '';
         j++;
     }
     i++;
 }
 
-textArr.forEach((text, index) => {
-    if(index === 0 && argv[1] !== '--append') {
-        return fs.writeFileSync('./out.txt', text);
-    }
-    return fs.appendFileSync(argv[2] || './out.txt', text);
-});
+saveFile(text, j);
