@@ -40,14 +40,15 @@ const sup = getFileContent('./words/sup.txt');
 
 let totalLength = [0];
 let text = '';
-let i = 0, j = 0;
+let i = 1, j = 0;
+let rAdj, rNoun, rSup;
 
 while(getTotalLength(totalLength) <= FILE_SIZE) {
-    const rAdj = Math.round(((Math.random() * i * FILE_SIZE) % adj.length));
-    const rNoun = Math.round(((Math.random() * i * FILE_SIZE) % noun.length));
-    const rSup = Math.round(((Math.random() * i * FILE_SIZE) % sup.length));
+    rAdj = Math.round(((Math.random() * i * FILE_SIZE) % adj.length));
+    rNoun = Math.round(((Math.random() * i * FILE_SIZE) % noun.length));
+    rSup = Math.round(((Math.random() * i * FILE_SIZE) % sup.length));
     try {
-        text += `${adj[rAdj]} ${noun[rNoun]} ${sup[rSup]} `;
+        text += `${sup[rSup]} ${adj[rAdj]} ${noun[rNoun]} `;
         totalLength[j] = text.length;
     } catch(e) {
         saveFile(text, j);
